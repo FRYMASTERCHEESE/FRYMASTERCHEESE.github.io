@@ -1,0 +1,24 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>FryMasterCheese Play & Earn</title>
+<meta name="description" content="Play skill-based games, earn points, level up and qualify for verified rewards.">
+<meta name="google-adsense-account" content="ca-pub-4051392846058327">
+<script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4051392846058327" crossorigin="anonymous"></script>
+<link rel="stylesheet" href="styles.css">
+</head><body>
+<header><div class="brand">🧀 FRYMASTER<span>CHEESE</span></div><div class="wallet">🪙 <b id="points">0</b> pts</div></header>
+<main>
+<section class="hero"><div class="pill">PLAY • LEVEL UP • EARN REWARDS</div><h1>PLAY.<br>EARN.<br>LEVEL UP.</h1><p>Play skill-based mini games, complete daily challenges and build your verified reward score.</p><button onclick="openGame()">Play Tap Rush</button></section>
+<section class="notice"><b>Rewards status:</b> Points and progress work now. Real-money withdrawals remain locked until the secure server-side payout service, identity/eligibility checks and anti-cheat verification are connected. Points are not cash or cryptocurrency.</section>
+<section class="stats"><article><b id="level">1</b><span>Level</span></article><article><b id="xp">0</b><span>XP</span></article><article><b id="best">0</b><span>Best streak</span></article></section>
+<section class="grid">
+<article class="card"><div class="emoji">⚡</div><h2>Tap Rush</h2><p>Score as many taps as possible in a timed skill round.</p><button onclick="openGame()">Play</button></article>
+<article class="card"><div class="emoji">🎯</div><h2>Daily Challenge</h2><p>Claim your once-per-day progress bonus.</p><button onclick="daily()">Claim daily</button></article>
+<article class="card"><div class="emoji">💰</div><h2>Rewards</h2><p>See your points and the status of verified withdrawals.</p><button class="dark" onclick="showRewards()">View rewards</button></article>
+</section>
+<section id="panel" class="card panel" hidden><h2 id="panelTitle">Tap Rush</h2><p id="panelText">Press start when you're ready.</p><div class="progress"><i id="bar"></i></div><div id="coin" class="coin" onclick="tap()">🧀</div><div class="actions"><button id="start" onclick="begin()">Start 10 seconds</button><button class="dark" onclick="closePanel()">Close</button></div></section>
+<section class="card"><h2>How rewards will work</h2><p>Game results must be verified by the secure backend before they can become withdrawable rewards. The production payout system will use authenticated accounts, server-authoritative scores, fraud controls, a reward ledger and audited payout requests.</p></section>
+</main><footer>© 2026 FryMasterCheese • Play responsibly • Rewards subject to verification and eligibility.</footer>
+<script src="app.js"></script></body></html>

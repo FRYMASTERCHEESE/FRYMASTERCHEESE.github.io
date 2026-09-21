@@ -3,22 +3,45 @@
 <head>
 <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
 <title>FryMasterCheese Play & Earn</title>
-<meta name="description" content="Play skill-based games, earn points, level up and qualify for verified rewards.">
+<meta name="description" content="Play skill games, save progress, refer friends and qualify for verified rewards.">
 <meta name="google-adsense-account" content="ca-pub-4051392846058327">
 <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4051392846058327" crossorigin="anonymous"></script>
 <link rel="stylesheet" href="styles.css">
-</head><body>
-<header><div class="brand">🧀 FRYMASTER<span>CHEESE</span></div><div class="wallet">🪙 <b id="points">0</b> pts</div></header>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+</head>
+<body>
+<header><a class="brand" href="#">🧀 FRYMASTER<span>CHEESE</span></a><nav><button class="navbtn" onclick="show('games')">Games</button><button class="navbtn" onclick="show('referrals')">Referrals</button><button class="navbtn" onclick="show('wallet')">Wallet</button><button id="accountBtn" class="navbtn primary" onclick="show('auth')">Login / Sign up</button></nav></header>
 <main>
-<section class="hero"><div class="pill">PLAY • LEVEL UP • EARN REWARDS</div><h1>PLAY.<br>EARN.<br>LEVEL UP.</h1><p>Play skill-based mini games, complete daily challenges and build your verified reward score.</p><button onclick="openGame()">Play Tap Rush</button></section>
-<section class="notice"><b>Rewards status:</b> Points and progress work now. Real-money withdrawals remain locked until the secure server-side payout service, identity/eligibility checks and anti-cheat verification are connected. Points are not cash or cryptocurrency.</section>
-<section class="stats"><article><b id="level">1</b><span>Level</span></article><article><b id="xp">0</b><span>XP</span></article><article><b id="best">0</b><span>Best streak</span></article></section>
-<section class="grid">
-<article class="card"><div class="emoji">⚡</div><h2>Tap Rush</h2><p>Score as many taps as possible in a timed skill round.</p><button onclick="openGame()">Play</button></article>
-<article class="card"><div class="emoji">🎯</div><h2>Daily Challenge</h2><p>Claim your once-per-day progress bonus.</p><button onclick="daily()">Claim daily</button></article>
-<article class="card"><div class="emoji">💰</div><h2>Rewards</h2><p>See your points and the status of verified withdrawals.</p><button class="dark" onclick="showRewards()">View rewards</button></article>
+<section class="hero"><div class="pill">PLAY • SAVE • REFER • EARN</div><h1>PLAY.<br>EARN.<br>LEVEL UP.</h1><p>Create an account to save progress across devices, play skill-based games and track verified rewards.</p><div class="row"><button onclick="show('games')">Play now</button><button class="dark" onclick="show('auth')">Create account</button></div></section>
+<div id="configWarning" class="notice warning"><b>Setup required:</b> add your Supabase URL and public anon key to <code>config.js</code>. Until then the game works locally, but login/cloud saves/referrals stay offline.</div>
+<section class="stats"><article><b id="points">0</b><span>Points</span></article><article><b id="level">1</b><span>Level</span></article><article><b id="xp">0</b><span>XP</span></article><article><b id="best">0</b><span>Best streak</span></article></section>
+
+<section id="games" class="view">
+<h2>Games</h2><div class="grid">
+<article class="card"><div class="emoji">⚡</div><h3>Tap Rush</h3><p>Score as many taps as possible in 10 seconds.</p><button onclick="openTap()">Play</button></article>
+<article class="card"><div class="emoji">🎯</div><h3>Daily Challenge</h3><p>One progress bonus per account each day.</p><button onclick="daily()">Claim daily</button></article>
+</div>
+<div id="gamePanel" class="card panel" hidden><h2>⚡ Tap Rush</h2><p id="gameText">Press start when ready.</p><div class="progress"><i id="bar"></i></div><div class="coin" onclick="tap()">🧀</div><div class="row"><button onclick="begin()">Start 10 seconds</button><button class="dark" onclick="gamePanel.hidden=true">Close</button></div></div>
 </section>
-<section id="panel" class="card panel" hidden><h2 id="panelTitle">Tap Rush</h2><p id="panelText">Press start when you're ready.</p><div class="progress"><i id="bar"></i></div><div id="coin" class="coin" onclick="tap()">🧀</div><div class="actions"><button id="start" onclick="begin()">Start 10 seconds</button><button class="dark" onclick="closePanel()">Close</button></div></section>
-<section class="card"><h2>How rewards will work</h2><p>Game results must be verified by the secure backend before they can become withdrawable rewards. The production payout system will use authenticated accounts, server-authoritative scores, fraud controls, a reward ledger and audited payout requests.</p></section>
-</main><footer>© 2026 FryMasterCheese • Play responsibly • Rewards subject to verification and eligibility.</footer>
-<script src="app.js"></script></body></html>
+
+<section id="auth" class="view" hidden>
+<h2>Account</h2><div class="two">
+<form class="card" onsubmit="signup(event)"><h3>Create account</h3><label>Email<input id="signupEmail" type="email" required autocomplete="email"></label><label>Password<input id="signupPassword" type="password" minlength="8" required autocomplete="new-password"></label><label>Referral code (optional)<input id="signupReferral" maxlength="24"></label><button>Create account</button><p class="muted">Email verification can be required in Supabase.</p></form>
+<form class="card" onsubmit="login(event)"><h3>Login</h3><label>Email<input id="loginEmail" type="email" required autocomplete="email"></label><label>Password<input id="loginPassword" type="password" required autocomplete="current-password"></label><button>Login</button><button type="button" class="dark" onclick="resetPassword()">Forgot password</button></form>
+</div><div id="accountPanel" class="card" hidden><h3>Your account</h3><p id="accountEmail"></p><button class="dark" onclick="logout()">Log out</button></div>
+</section>
+
+<section id="referrals" class="view" hidden>
+<h2>Referral program</h2><div class="card"><p>Your unique referral link:</p><div class="copyrow"><input id="refLink" readonly value="Login to get your referral link"><button onclick="copyReferral()">Copy</button></div><div class="stats mini"><article><b id="refCount">0</b><span>Verified referrals</span></article><article><b id="refPending">0</b><span>Pending</span></article></div><p class="muted">A referral is recorded at signup. Reward eligibility should only be granted after server-side verification and qualifying activity; self-referrals and duplicate accounts are not eligible.</p></div>
+</section>
+
+<section id="wallet" class="view" hidden>
+<h2>Rewards & withdrawals</h2><div class="notice"><b>Real-money safety:</b> game points are not automatically cash. Only server-verified rewards can become withdrawable.</div>
+<div class="stats"><article><b id="pendingMoney">$0.00</b><span>Pending</span></article><article><b id="verifiedMoney">$0.00</b><span>Verified</span></article><article><b id="paidMoney">$0.00</b><span>Paid</span></article></div>
+<form class="card" onsubmit="requestWithdrawal(event)"><h3>Request withdrawal</h3><label>Method<select id="withdrawMethod"><option>PayPal</option><option>SOL</option><option>ETH</option><option>DOGE</option><option>BTC</option></select></label><label>PayPal email or wallet address<input id="withdrawDestination" required></label><label>Amount (USD value)<input id="withdrawAmount" type="number" min="1" step=".01" required></label><button>Request withdrawal</button><p class="muted">Requests are created as pending. Private keys and PayPal secrets must never be stored in this website.</p></form>
+</section>
+</main>
+<div id="toast"></div>
+<footer>© 2026 FryMasterCheese • Play responsibly • Rewards subject to verification, eligibility and applicable law.</footer>
+<script src="config.js"></script><script src="app.js"></script>
+</body></html>

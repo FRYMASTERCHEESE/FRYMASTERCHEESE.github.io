@@ -1,15 +1,20 @@
-'use strict';
-const KEY='fmc_play_v2';
-let state={points:0,xp:0,best:0,lastDaily:''};
-try{state={...state,...JSON.parse(localStorage.getItem(KEY)||'{}')}}catch(e){}
-let running=false,taps=0,timer=null;
-const $=id=>document.getElementById(id);
-function save(){localStorage.setItem(KEY,JSON.stringify(state));render()}
-function render(){$('points').textContent=state.points;$('xp').textContent=state.xp;$('best').textContent=state.best;$('level').textContent=1+Math.floor(state.xp/100)}
-function openGame(){$('panel').hidden=false;$('panelTitle').textContent='⚡ Tap Rush';$('panelText').textContent='Tap the cheese as many times as possible in 10 seconds.';$('coin').style.display='block';$('start').style.display='block';$('bar').style.width='0';$('panel').scrollIntoView({behavior:'smooth'})}
-function begin(){if(running)return;running=true;taps=0;let ticks=50;$('panelText').textContent='GO! 0 taps';$('bar').style.width='100%';timer=setInterval(()=>{ticks--;$('bar').style.width=(ticks*2)+'%';if(ticks<=0){clearInterval(timer);timer=null;running=false;state.points+=taps;state.xp+=Math.min(taps,100);state.best=Math.max(state.best,taps);save();$('panelText').textContent=`Round finished! ${taps} taps — +${taps} points.`}},200)}
-function tap(){if(running){taps++;$('panelText').textContent=`GO! ${taps} taps`}}
-function daily(){const today=new Date().toISOString().slice(0,10);if(state.lastDaily===today){alert("You've already claimed today's bonus.");return}state.lastDaily=today;state.points+=25;state.xp+=10;save();alert('Daily bonus claimed: +25 points and +10 XP.')}
-function showRewards(){$('panel').hidden=false;$('panelTitle').textContent='💰 Rewards';$('panelText').textContent=`You have ${state.points} game points. Real-money withdrawals are locked until the secure payout backend is connected and your gameplay is verified.`;$('coin').style.display='none';$('start').style.display='none';$('bar').style.width='0';$('panel').scrollIntoView({behavior:'smooth'})}
-function closePanel(){if(timer)clearInterval(timer);timer=null;running=false;$('panel').hidden=true}
-render();
+const C=window.FMC_CONFIG||{}, cloud=!!(C.SUPABASE_URL&&C.SUPABASE_ANON_KEY), sb=cloud?supabase.createClient(C.SUPABASE_URL,C.SUPABASE_ANON_KEY):null;
+const KEY='fmc_v2_local';let state=JSON.parse(localStorage.getItem(KEY)||'null')||{points:0,xp:0,best:0,lastDaily:''};let user=null,running=false,taps=0,timer=null;
+const $=id=>document.getElementById(id);function toast(m){$('toast').textContent=m;$('toast').style.display='block';setTimeout(()=>$('toast').style.display='none',2800)}
+function render(){localStorage.setItem(KEY,JSON.stringify(state));$('points').textContent=state.points||0;$('xp').textContent=state.xp||0;$('best').textContent=state.best||0;$('level').textContent=1+Math.floor((state.xp||0)/100)}
+function show(id){document.querySelectorAll('.view').forEach(x=>x.hidden=x.id!==id);document.getElementById(id).scrollIntoView({behavior:'smooth'})}
+function openTap(){show('games');$('gamePanel').hidden=false;$('gamePanel').scrollIntoView({behavior:'smooth'})}
+function begin(){if(running)return;running=true;taps=0;let left=100;$('gameText').textContent='GO! 0 taps';$('bar').style.width='100%';timer=setInterval(async()=>{left-=2;$('bar').style.width=left+'%';if(left<=0){clearInterval(timer);running=false;state.points+=taps;state.xp+=Math.min(taps,100);state.best=Math.max(state.best,taps);render();$('gameText').textContent=`Finished! ${taps} taps — +${taps} points.`;await saveProfile()}},200)}
+function tap(){if(running){taps++;$('gameText').textContent=`GO! ${taps} taps`}}
+async function daily(){let d=new Date().toISOString().slice(0,10);if(state.lastDaily===d)return toast("Today's bonus is already claimed.");state.lastDaily=d;state.points+=25;state.xp+=10;render();await saveProfile();toast('+25 points and +10 XP')}
+async function signup(e){e.preventDefault();if(!cloud)return toast('Connect Supabase in config.js first.');let email=$('signupEmail').value.trim(),password=$('signupPassword').value,ref=$('signupReferral').value.trim().toUpperCase();let {data,error}=await sb.auth.signUp({email,password,options:{data:{referred_by_code:ref||null}}});if(error)return toast(error.message);toast('Account created. Check your email if verification is enabled.');}
+async function login(e){e.preventDefault();if(!cloud)return toast('Connect Supabase in config.js first.');let {data,error}=await sb.auth.signInWithPassword({email:$('loginEmail').value.trim(),password:$('loginPassword').value});if(error)return toast(error.message);await setUser(data.user);toast('Logged in.')}
+async function logout(){if(sb)await sb.auth.signOut();user=null;$('accountPanel').hidden=true;$('accountBtn').textContent='Login / Sign up';toast('Logged out.')}
+async function resetPassword(){if(!cloud)return toast('Connect Supabase first.');let email=$('loginEmail').value.trim();if(!email)return toast('Enter your email first.');let {error}=await sb.auth.resetPasswordForEmail(email,{redirectTo:location.origin});toast(error?error.message:'Password reset email sent.')}
+async function setUser(u){user=u;if(!u)return;$('accountBtn').textContent='Account';$('accountPanel').hidden=false;$('accountEmail').textContent=u.email;await loadProfile();await loadReferrals()}
+async function loadProfile(){let {data,error}=await sb.from('profiles').select('points,xp,best,last_daily,referral_code').eq('id',user.id).single();if(error)return;state={points:data.points||0,xp:data.xp||0,best:data.best||0,lastDaily:data.last_daily||''};render();$('refLink').value=location.origin+location.pathname+'?ref='+data.referral_code}
+async function saveProfile(){if(!cloud||!user)return;await sb.rpc('save_game_progress',{p_points:state.points,p_xp:state.xp,p_best:state.best,p_last_daily:state.lastDaily||null})}
+async function loadReferrals(){if(!user)return;let {data}=await sb.from('referrals').select('status').eq('referrer_id',user.id);data=data||[];$('refCount').textContent=data.filter(x=>x.status==='verified').length;$('refPending').textContent=data.filter(x=>x.status==='pending').length}
+function copyReferral(){let x=$('refLink');if(!user)return toast('Login first to get your referral link.');navigator.clipboard.writeText(x.value);toast('Referral link copied.')}
+async function requestWithdrawal(e){e.preventDefault();if(!cloud||!user)return toast('Login is required.');let {error}=await sb.rpc('request_withdrawal',{p_method:$('withdrawMethod').value.toLowerCase(),p_destination:$('withdrawDestination').value.trim(),p_amount_usd:Number($('withdrawAmount').value)});toast(error?error.message:'Withdrawal request submitted for verification.')}
+(async function init(){render();let ref=new URLSearchParams(location.search).get('ref');if(ref){localStorage.setItem('fmc_ref',ref.toUpperCase());$('signupReferral').value=ref.toUpperCase()}if(!cloud)return;$('configWarning').hidden=true;let {data}=await sb.auth.getSession();if(data.session)await setUser(data.session.user);sb.auth.onAuthStateChange((_e,s)=>{if(s?.user)setUser(s.user)})})();

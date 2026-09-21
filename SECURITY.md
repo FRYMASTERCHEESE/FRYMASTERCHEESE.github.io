@@ -1,10 +1,11 @@
 # Security rules
-
-- No private keys or seed phrases in this repository.
-- No PayPal client secret in browser JavaScript.
-- No real balance stored only in localStorage.
-- No client-authoritative score or reward calculation.
-- Do not auto-pay suspicious/large withdrawals without review.
-- Validate payout destinations server-side.
-- Use HTTPS, secure sessions, CSRF protection where applicable, strict CORS, rate limiting and audit logs.
-- Use integer minor units for fiat and integer base units for crypto internally; avoid floating point for money.
+- Never store seed phrases/private keys in GitHub.
+- Never store PayPal client secrets in GitHub.
+- Never put a Supabase service-role key in `config.js`.
+- Browser points are not money.
+- Only a trusted server process may credit verified cash value.
+- Validate payout destinations server-side before payment.
+- Rate-limit games, signup, referrals and withdrawals.
+- Detect self-referrals, duplicate accounts/devices and automated play.
+- Keep an immutable reward/payout audit log before live launch.
+- Use manual payout approval during early production.

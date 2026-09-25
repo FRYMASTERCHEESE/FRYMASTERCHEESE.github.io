@@ -1,0 +1,7 @@
+Upload ALL files in this package to the ROOT of FRYMASTERCHEESE/FRYMASTERCHEESE.github.io, replacing files with the same names.
+
+This package preserves your Supabase public browser configuration.
+It keeps the AdSense account meta tag and ads.txt but removes the Auto Ads JavaScript during remediation, so Google ads are not served beside game controls/login/wallet while the site is under review.
+After approval, ads should be added carefully to substantial content pages, away from interactive game controls.
+
+This package does NOT make real-money payouts operational. Secure server-side verification and payout processing are still required.

@@ -1,1 +1,21 @@
-Upload/replace every file in this ZIP in the ROOT of FRYMASTERCHEESE/FRYMASTERCHEESE.github.io. Do not request another AdSense review until the deployed site and existing login/game/cloud-save features have been checked. This package intentionally contains no Google ad-serving JavaScript.
+FRYMASTERCHEESE V4 — CONTENT & QUALITY EXPANSION
+=================================================
+Upload/replace EVERY file from this ZIP in the ROOT of:
+FRYMASTERCHEESE/FRYMASTERCHEESE.github.io
+
+What V4 changes:
+- Expands the site from a small game/utility site into a fuller game + original player-resource site.
+- Adds substantial original pages for strategy, daily progress, referrals, reward-record transparency, browser troubleshooting, accessibility, practice challenges and a detailed FAQ.
+- Expands existing core guides and cross-links related resources.
+- Keeps the existing Supabase browser configuration and existing Tap Rush/account/referral/request functions.
+- Keeps ads.txt and the AdSense account meta tag.
+- Intentionally DOES NOT add the Google ad-serving JavaScript yet.
+- Clearly separates gameplay statistics from monetary reward records.
+- Clearly states that the current website does not itself execute PayPal/crypto payments.
+
+After uploading:
+1. Let GitHub Pages deploy.
+2. Test homepage, Guides, Challenges and several individual guides on mobile.
+3. Test Tap Rush.
+4. Test existing login and cloud progress.
+5. Do not request another AdSense review until the deployed V4 site has been checked.

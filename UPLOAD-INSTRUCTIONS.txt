@@ -1,21 +1,24 @@
-FRYMASTERCHEESE V4 — CONTENT & QUALITY EXPANSION
-=================================================
+FRYMASTERCHEESE V5 — GENUINE TRAFFIC & SHARING UPGRADE
+========================================================
 Upload/replace EVERY file from this ZIP in the ROOT of:
 FRYMASTERCHEESE/FRYMASTERCHEESE.github.io
 
-What V4 changes:
-- Expands the site from a small game/utility site into a fuller game + original player-resource site.
-- Adds substantial original pages for strategy, daily progress, referrals, reward-record transparency, browser troubleshooting, accessibility, practice challenges and a detailed FAQ.
-- Expands existing core guides and cross-links related resources.
-- Keeps the existing Supabase browser configuration and existing Tap Rush/account/referral/request functions.
-- Keeps ads.txt and the AdSense account meta tag.
-- Intentionally DOES NOT add the Google ad-serving JavaScript yet.
-- Clearly separates gameplay statistics from monetary reward records.
-- Clearly states that the current website does not itself execute PayPal/crypto payments.
+V5 keeps all V4 content and adds:
+- Share Score after a completed Tap Rush round.
+- Native phone share support where available.
+- Facebook and WhatsApp challenge sharing.
+- Copy Challenge Link with the player's genuine score.
+- A dedicated Challenge a Friend content page.
+- Open Graph/Twitter social-preview metadata.
+- WebSite structured data.
+- Stronger internal links and a genuine player-growth explanation.
+- No fake leaderboard, fake users, fake traffic or paid/bot traffic.
+- Sharing does NOT affect points, XP, referrals or reward eligibility.
+- Google ad-serving JavaScript remains OFF during remediation.
 
-After uploading:
-1. Let GitHub Pages deploy.
-2. Test homepage, Guides, Challenges and several individual guides on mobile.
-3. Test Tap Rush.
-4. Test existing login and cloud progress.
-5. Do not request another AdSense review until the deployed V4 site has been checked.
+After upload, test:
+1. Play one Tap Rush round.
+2. Confirm the Share Score panel appears.
+3. Test Share Score and Copy Challenge Link.
+4. Open Guides and Challenge a Friend.
+5. Confirm login/cloud progress still works.
